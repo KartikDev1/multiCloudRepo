@@ -9,27 +9,40 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Init Firebase Admin SDK
+// Initialize Firebase Admin SDK
 initializeApp({
   credential: cert(serviceAccount)
 });
+
 const db = getFirestore();
 
 // Get all posts
 app.get('/posts', async (req, res) => {
-  const snapshot = await db.collection('posts').get();
-  const posts = snapshot.docs.map(doc => doc.data());
-  res.json(posts);
+  try {
+    const snapshot = await db.collection('posts').get();
+    const posts = snapshot.docs.map(doc => doc.data());
+    res.json(posts);
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Add a new post
 app.post('/posts', async (req, res) => {
-  const { title, content } = req.body;
-  const newPost = { title, content, timestamp: new Date() };
-  await db.collection('posts').add(newPost);
-  res.status(201).send('Post added');
+  try {
+    const { title, content } = req.body;
+    const newPost = { title, content, timestamp: new Date() };
+    await db.collection('posts').add(newPost);
+    res.status(201).send('Post added');
+  } catch (error) {
+    console.error('Error adding post:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
+// Important: Use dynamic port for Azure
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
