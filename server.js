@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const { initializeApp, cert } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
-const serviceAccount = require('./serviceAccountKey.json');
+const serviceAccount = require('./multi-cloud-blog-firebase-adminsdk-fbsvc-c5eac67744.json');
 
 const app = express();
 app.use(cors());
